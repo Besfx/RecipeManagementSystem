@@ -1,0 +1,30 @@
+@model Recipe
+
+<div class="recipe-card">
+    <h3 class="text-primary">@Model.Name</h3>
+    <p><strong class="text-muted">Category:</strong> <span class="text-info">@Model.Category</span></p>
+    <p><strong class="text-muted">Preparation Time:</strong> <span class="text-info">@Model.PreparationTime minutes</span></p>
+    
+    <div class="mt-3">
+        <h5 class="text-secondary">Ingredients:</h5>
+        <div class="p-2 bg-light rounded">
+            @Html.Raw(Model.Ingredients.Replace("\n", "<br />"))
+        </div>
+    </div>
+    
+    <div class="mt-3">
+        <h5 class="text-secondary">Instructions:</h5>
+        <div class="p-2 bg-light rounded">
+            @Html.Raw(Model.Instructions.Replace("\n", "<br />"))
+        </div>
+    </div>
+</div>
+
+<style>
+    .recipe-card {
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        background-color: #fff;
+    }
+</style>

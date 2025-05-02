@@ -1,0 +1,104 @@
+﻿
+@model IEnumerable<Recipe>
+
+@{
+    ViewData["Title"] = "Recipe Management System";
+}
+
+<div class="container">
+    <h1 class="my-4">Recipe Management System</h1>
+    
+    <!-- Search Bar -->
+    <form asp-action="Index" method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="searchString" class="form-control" placeholder="Search by recipe name..." value="@ViewData["CurrentFilter"]" />
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </form>
+    
+    <!-- Add Recipe Button -->
+    <p>
+        <a asp-action="Create" class="btn btn-success">Add New Recipe</a>
+    </p>
+    
+    <!-- Recipes Table -->
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Preparation Time (min)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                    <td>@Html.DisplayFor(modelItem => item.PreparationTime)</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#detailsModal" 
+                                onclick="loadDetails(@item.Id)">Details</button>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal for Details Partial View -->
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Recipe Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="detailsContent">
+                <!-- Partial view content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize modal event handlers
+            $('#detailsModal').on('show.bs.modal', function() {
+                // Optional: Add any pre-show logic here
+            });
+        });
+
+        function loadDetails(id) {
+            // Show loading indicator
+            $('#detailsContent').html('<div class="text-center p-4"><i class="fas fa-spinner fa-spin fa-2x"></i> Loading...</div>');
+            
+            // Show modal immediately
+            $('#detailsModal').modal('show');
+            
+            // Load content via AJAX
+            $.ajax({
+                url: '/Home/Details/' + id,
+                type: 'GET',
+                success: function(data) {
+                    $('#detailsContent').html(data);
+                },
+                error: function(xhr) {
+                    $('#detailsContent').html('<div class="alert alert-danger">Error loading details</div>');
+                }
+            });
+        }
+    </script>
+}
